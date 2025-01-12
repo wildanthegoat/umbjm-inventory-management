@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Barang {
+  id            String    @id @default(cuid())
+  nama_barang   String    @db.VarChar(50)
+  jumlah        Int
+  harga         Int
+  deskripsi     String
+  tanggal_masuk DateTime
+  kondisi       String    @db.VarChar(20)
+  userId        String
+  kategoriId    String
+  lokasiId      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id])
+  kategori Kategori @relation(fields: [kategoriId], references: [id])
+  lokasi   Lokasi   @relation(fields: [lokasiId], references: [id])
+}
+
+model Kategori {
+  id           String    @id @default(cuid())
+  nama_kategori String   @db.VarChar(50)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  barang Barang[]
+}
+
+model Lokasi {
+  id        String    @id @default(cuid())
+  kampus    String    @db.VarChar(30)
+  gedung    String    @db.VarChar(50)
+  ruangan   String    @db.VarChar(50)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  barang Barang[]
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String    @db.VarChar(50)
+  username  String    @db.VarChar(50) @unique
+  password  String    @db.VarChar(100)
+  role      Role
+  divisi    String    @db.VarChar(30)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  barang Barang[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
