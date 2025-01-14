@@ -25,19 +25,6 @@ export const addBarang = async (barangData) => {
   
     return res.json();
   };
-  
-export const fetchBarangById = async (id) => {
-    const response = await fetch(`/api/barang/${id}`);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Failed to fetch barang data:', response.status, errorText);
-      throw new Error(`Failed to fetch barang data: ${response.status} ${errorText}`);
-    }
-    
-    const data = await response.json();
-    return data;
-  };
 
   export const updateBarang = async (barangData) => {
     const res = await fetch('/api/barang', {
@@ -52,4 +39,21 @@ export const fetchBarangById = async (id) => {
       throw new Error('Failed to update barang');
     }
     return res.json();
+  };
+
+  export const deleteBarang = async (id) => {
+    try {
+      const response = await fetch(`/api/barang?id=${id}`, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete barang");
+      }
+  
+      const result = await response.json();
+      console.log(result.message);
+    } catch (error) {
+      console.error(error.message);
+    }
   };

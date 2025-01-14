@@ -26,8 +26,8 @@ import { AddKategori } from "./addKategori";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchKategori } from "@/function/kategori";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
-import { AlertDelete } from "@/components/alert-delete";
 import { UpdateKategori } from "./updateKategori";
+import { DeleteKategori } from "./deleteKategori";
 
 const KategoriPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
@@ -94,7 +94,7 @@ const KategoriPage = () => {
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <UpdateKategori kategori={kategori} />
                               <DropdownMenuSeparator/>
-                              <AlertDelete kategoriId={kategori.id} />
+                              <DeleteKategori kategoriId={kategori.id} namaKategori={kategori.nama_kategori} />
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

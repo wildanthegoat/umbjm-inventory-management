@@ -18,7 +18,6 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
   DropdownMenuLabel,
-  DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -26,9 +25,9 @@ import { ChevronDown, MoreHorizontal } from "lucide-react";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
 import { useColumnVisibility } from "@/function/useColumnVisibility";
 import { fetchUser } from "@/function/user";
-import { AlertDelete } from "@/components/alert-delete";
 import { AddUser } from "./addUser";
 import { UpdateUser } from "./updateUser";
+import { DeleteUser } from "./deleteUser";
 
 const UserPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
@@ -131,7 +130,7 @@ const UserPage = () => {
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <UpdateUser user={user} />
                             <DropdownMenuSeparator/>
-                            <AlertDelete />
+                            <DeleteUser userId={user.id} userName={user.name} />
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableRow>

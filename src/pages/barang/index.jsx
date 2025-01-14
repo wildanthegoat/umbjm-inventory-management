@@ -34,6 +34,7 @@ import Link from "next/link";
 import { ExportExcel } from "@/components/excel";
 import { KategoriFilter } from "@/components/kategori-filter";
 import { UpdateBarang } from "./updateBarang";
+import { DeleteBarang } from "./deleteBarang";
 
 
 const BarangPage = () => {
@@ -160,7 +161,8 @@ const BarangPage = () => {
                           </DropdownMenuItem>
                           <UpdateBarang barang={barang} />
                           <DropdownMenuSeparator/>
-                          <AlertDelete title="Delete Barang" description="Are you sure you want to delete this barang?" barangName={barang.nama_barang} />                        </DropdownMenuContent>
+                          <DeleteBarang barangId={barang.id} namaBarang={barang.nama_barang} />
+                          </DropdownMenuContent>
                       </DropdownMenu>
                     </TableRow>
                   ))}

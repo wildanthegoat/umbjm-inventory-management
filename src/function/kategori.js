@@ -36,3 +36,20 @@ export const updateKategori = async (kategoriData) => {
   }
   return res.json();
 };
+
+export const deleteKategori = async (id) => {
+  try {
+    const response = await fetch(`/api/kategori?id=${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete kategori");
+    }
+
+    const result = await response.json();
+    console.log(result.message);
+  } catch (error) {
+    console.error(error.message);
+  }
+};

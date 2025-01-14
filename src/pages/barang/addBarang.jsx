@@ -83,6 +83,7 @@ export function AddBarang() {
       deskripsi,
       tanggal_masuk: formattedDate,
     });
+    handleOpenChange(false);
   };
 
   const handleOpenChange = (isOpen) => {
@@ -224,8 +225,8 @@ export function AddBarang() {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleAddBarang}>
-            Tambahkan Barang
+          <Button type="submit">
+            Tambahkan
           </Button>          
         </DialogFooter>
         </form>

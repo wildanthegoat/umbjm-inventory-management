@@ -36,4 +36,19 @@ export const updateLokasi = async (lokasiData) => {
   return res.json();
 };
 
+export const deleteLokasi = async (id) => {
+  try {
+    const response = await fetch(`/api/lokasi?id=${id}`, {
+      method: "DELETE",
+    });
 
+    if (!response.ok) {
+      throw new Error("Failed to delete lokasi");
+    }
+
+    const result = await response.json();
+    console.log(result.message);
+  } catch (error) {
+    console.error(error.message);
+  }
+};

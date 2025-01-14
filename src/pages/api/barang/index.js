@@ -155,9 +155,29 @@ export default async function handler(req, res) {
       console.error("Error updating Barang:", error.message);
       return res.status(500).json({ error: "Failed to update Barang." });
     }
-  } 
+  }
+  else if (method === "DELETE") {
+    try {
+      const { id } = req.query;
+
+      if (!id) {
+        return res.status(400).json({ error: "Barang ID is required" });
+      }
+
+      await prisma.barang.delete({
+        where: { id },
+      });
+
+      res.status(200).json({ message: "Barang deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting barang:", error.message);
+      res
+        .status(500)
+        .json({ error: "Failed to delete barang", details: error.message });
+    }
+  }
   else {
-    res.setHeader("Allow", ["GET", "POST", "PATCH"]);
+    res.setHeader("Allow", ["GET", "POST", "PATCH", "DELETE"]);
     return res.status(405).end(`Method ${method} Not Allowed`);
   }
 }

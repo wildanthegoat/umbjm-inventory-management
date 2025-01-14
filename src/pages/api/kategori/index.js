@@ -38,8 +38,29 @@ export default async function handler(req, res) {
       } catch (error) {
         res.status(500).json({ error: 'Failed to update kategori' });
       }
+      break;
+      case "DELETE":
+        try {
+          const { id } = req.query;
+  
+          if (!id) {
+            return res.status(400).json({ error: "Kategori ID is required" });
+          }
+  
+          await prisma.kategori.delete({
+            where: { id },
+          });
+  
+          res.status(200).json({ message: "Kategori deleted successfully" });
+        } catch (error) {
+          console.error("Error deleting kategori:", error.message);
+          res
+            .status(500)
+            .json({ error: "Failed to delete kategori", details: error.message });
+        }
+        break;
     default:
-      res.setHeader('Allow', ['GET', 'POST']);
+      res.setHeader('Allow', ['GET', 'POST', 'PATCH', 'DELETE']);
       res.status(405).end(`Method ${method} Not Allowed`);
       break;
   }

@@ -29,6 +29,7 @@ import { useGlobalFilter } from "@/function/useGlobalFilter";
 import { useColumnVisibility } from "@/function/useColumnVisibility";
 import { AlertDelete } from "@/components/alert-delete";
 import { UpdateLokasi } from "./updateLokasi";
+import { DeleteLokasi } from "./deleteLokasi";
 
 const LokasiPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
@@ -127,9 +128,12 @@ const LokasiPage = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <UpdateLokasi lokasi={lokasi} />
-                            <DropdownMenuSeparator/>
-                            <AlertDelete />
+                          <UpdateLokasi lokasi={lokasi} />
+                          <DropdownMenuSeparator />
+                          <DeleteLokasi
+                            lokasiId={lokasi.id}
+                            lokasi={`${lokasi.kampus} - ${lokasi.gedung} - ${lokasi.ruangan}`}
+                          />{" "}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableRow>
