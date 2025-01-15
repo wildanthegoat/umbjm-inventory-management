@@ -31,6 +31,7 @@ import { useColumnVisibility } from "@/function/useColumnVisibility";
 import Link from "next/link";
 import { ExportExcel } from "@/components/excel";
 import { KategoriFilter } from "@/components/kategori-filter";
+import { LokasiFilter } from "@/components/lokasi-filter";
 import { UpdateBarang } from "./updateBarang";
 import { DeleteBarang } from "./deleteBarang";
 import { useSession } from "next-auth/react";
@@ -40,6 +41,11 @@ const BarangPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
     useGlobalFilter();
   const [selectedKategori, setSelectedKategori] = useState("");
+  const [selectedLokasi, setSelectedLokasi] = useState({
+    kampus: "",
+    gedung: "",
+    ruangan: "",
+  });
   const { visibleColumns, handleColumnVisibilityChange } = useColumnVisibility({
     nama_barang: true,
     kondisi: true,
@@ -59,28 +65,43 @@ const BarangPage = () => {
   }
   const filteredData = useMemo(() => {
     if (!data) return [];
-    // Apply the kategori filter
     let filtered = data;
+  
+    // Apply the category filter
     if (selectedKategori) {
-      filtered = data.filter((item) => item.kategori.id === selectedKategori);
+      filtered = filtered.filter((item) => item.kategori.id === selectedKategori);
     }
-    // Apply the global search filter
+    // location filter
+    if (selectedLokasi.kampus) {
+      filtered = filtered.filter((item) => item.lokasi.kampus === selectedLokasi.kampus);
+    }
+    if (selectedLokasi.gedung) {
+      filtered = filtered.filter((item) => item.lokasi.gedung === selectedLokasi.gedung);
+    }
+    if (selectedLokasi.ruangan) {
+      filtered = filtered.filter((item) => item.lokasi.ruangan === selectedLokasi.ruangan);
+    }
+    // global search filter
     return filterData(filtered, [
       "nama_barang",
       "kondisi",
       "jumlah",
       "harga",
-      "kategori.nama_kategori", // Access nested field
-      "lokasi.kampus", // Access nested field
+      "kategori.nama_kategori",
+      "lokasi.kampus",
       "lokasi.gedung",
       "lokasi.ruangan",
     ]);
-  }, [data, selectedKategori, filterData]);
+  }, [data, selectedKategori, selectedLokasi, filterData]);
+  
   const { data: session } = useSession();
   const userRole = session?.user?.role;
 
   const handleKategoriSelect = (kategoriId) => {
     setSelectedKategori(kategoriId);
+  };
+  const handleLokasiSelect = (lokasi) => {
+    setSelectedLokasi(lokasi);
   };
   return (
     <div>
@@ -103,6 +124,7 @@ const BarangPage = () => {
             className="max-w-sm"
           />
           <KategoriFilter onSelectKategori={handleKategoriSelect} />
+          <LokasiFilter onSelectLokasi={handleLokasiSelect}/>
           <ExportExcel />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

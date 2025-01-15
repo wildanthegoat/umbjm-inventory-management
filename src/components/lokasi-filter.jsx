@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -11,36 +11,35 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { fetchLokasi } from "@/function/lokasi"
+} from "@/components/ui/popover";
 
 export function LokasiFilter({ onSelectLokasi }) {
-  const [open, setOpen] = useState(false)
-  const [value, setValue] = useState("")
-  const [lokasiData, setLokasiData] = useState([])
-  
-  useEffect(() => {
-    const fetchKategori = async () => {
-      try {
-        const response = await fetch("/api/lokasi")
-        const data = await response.json()
-        const formattedData = data.map(item => ({
-          value: item.id,
-          label: item.nama_kategori
-        }))
-        setLokasiData(formattedData)
-      } catch (error) {
-        console.error("Error fetching lokasi:", error)
-      }
-    }
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [lokasiData, setLokasiData] = useState([]);
 
-    fetchLokasi()
-  }, [])
+  useEffect(() => {
+    const fetchLokasi = async () => {
+      try {
+        const response = await fetch("/api/lokasi");
+        const data = await response.json();
+        const formattedData = data.map((item) => ({
+          value: item.id,
+          label: `${item.kampus} - ${item.gedung} - ${item.ruangan}`,
+        }));
+        setLokasiData(formattedData);
+      } catch (error) {
+        console.error("Error fetching lokasi:", error);
+      }
+    };
+
+    fetchLokasi();
+  }, []);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -49,15 +48,15 @@ export function LokasiFilter({ onSelectLokasi }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[150px] justify-between"
+          className="w-[200px] justify-between"
         >
           {value
-            ? kategoriData.find((item) => item.value === value)?.label
+            ? lokasiData.find((item) => item.value === value)?.label
             : "Pilih Lokasi"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[150px] p-0">
+      <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Cari lokasi..." className="h-9" />
           <CommandList>
@@ -66,12 +65,12 @@ export function LokasiFilter({ onSelectLokasi }) {
               <CommandItem
                 value="all"
                 onSelect={() => {
-                  setValue("")
-                  setOpen(false)
-                  onSelectKategori("")
+                  setValue("");
+                  setOpen(false);
+                  onSelectLokasi("");
                 }}
               >
-                Semua Kategori
+                Semua Lokasi
                 <Check
                   className={cn(
                     "ml-auto h-4 w-4",
@@ -84,9 +83,10 @@ export function LokasiFilter({ onSelectLokasi }) {
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
-                    onSelectKategori(currentValue === value ? "" : currentValue)
+                    const selectedValue = currentValue === value ? "" : currentValue;
+                    setValue(selectedValue);
+                    setOpen(false);
+                    onSelectLokasi(selectedValue);
                   }}
                 >
                   {item.label}
@@ -103,5 +103,5 @@ export function LokasiFilter({ onSelectLokasi }) {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

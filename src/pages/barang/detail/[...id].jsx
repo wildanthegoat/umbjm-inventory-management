@@ -4,10 +4,11 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import html2canvas from "html2canvas";
 
 const BarangDetailPage = () => {
   const router = useRouter();
@@ -15,6 +16,7 @@ const BarangDetailPage = () => {
   const [data, setData] = useState(null);
   const [umur, setUmur] = useState({ days: 0, months: 0, years: 0 });
   const [showQRCode, setShowQRCode] = useState(false);
+  const qrRef = useRef(null); // Reference for QR code container
 
   useEffect(() => {
     if (!id) {
@@ -34,39 +36,28 @@ const BarangDetailPage = () => {
     const now = new Date();
     const diffTime = Math.abs(now - tanggalMasuk);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
     const years = Math.floor(diffDays / 365);
     const months = Math.floor((diffDays % 365) / 30);
     const days = diffDays % 30;
-
     setUmur({ days, months, years });
-  };
-
-  const getOrdinalSuffix = (day) => {
-    if (day > 3 && day < 21) return "th";
-    switch (day % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
   };
 
   const formatDateString = (date) => {
     if (!date) return "";
     const options = { year: "numeric", month: "long", day: "numeric" };
-    const dateObj = new Date(date);
-    const day = dateObj.getDate();
-    const month = new Intl.DateTimeFormat("en-US", { month: "long" }).format(
-      dateObj
-    );
-    const year = dateObj.getFullYear();
-    const suffix = getOrdinalSuffix(day);
-    return `${month} ${day}${suffix}, ${year}`;
+    return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
+  };
+
+  const downloadQRCode = async () => {
+    if (!qrRef.current) return;
+    // Capture the QR code container as an image
+    const canvas = await html2canvas(qrRef.current, { scale: 4 });
+    const image = canvas.toDataURL("image/png");
+    // Create a download link
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = `qr-code-${data.nama_barang || "barang"}.png`;
+    link.click();
   };
 
   return (
@@ -79,11 +70,11 @@ const BarangDetailPage = () => {
         <Button onClick={() => router.back()}>Kembali</Button>
       </div>
       <Separator />
-      <div className="mt-5 px-10 max-w-4xl mx-auto rounded-md border border-border/50 flex justify-between">
+      <div className="mt-10 px-10 max-w-4xl mx-auto rounded-md border border-border/50 grid grid-cols-2">
         {data && (
           <>
             {/* Left Section */}
-            <div className="items-center">
+            <div className="items-center mt-5">
               <Heading title={data.nama_barang} />
               <p>
                 <strong>Kondisi:</strong> <Badge>{data.kondisi}</Badge>
@@ -106,9 +97,8 @@ const BarangDetailPage = () => {
               </p>
               <p className="text-3xl">{data.jumlah}</p>
             </div>
-
             {/* Right Section */}
-            <div className="items-center">
+            <div className="items-center mt-5">
               <p>
                 <strong>Harga:</strong>
               </p>
@@ -129,20 +119,21 @@ const BarangDetailPage = () => {
                 <strong>Deskripsi:</strong>
               </p>
               <Textarea value={data.deskripsi} readOnly />
-              <div className="mt-4">
-                <Button onClick={() => setShowQRCode(!showQRCode)}>
-                  {showQRCode ? "Hide QR Code" : "Generate QR Code"}
+            </div>
+            <div className="mt-2 items-center flex">
+              <div>
+                <div ref={qrRef} className="mt-3 text-center">
+                  <p className="text-lg font-bold mb-2">{data.nama_barang}</p>
+                  <QRCodeCanvas
+                    value={`http://localhost:3000/api/barang?id=${id}`}
+                    size={256}
+                    level="H"
+                    includeMargin
+                  />
+                </div>
+                <Button className="mt-2 flex items-end" onClick={downloadQRCode}>
+                  Download QR Code
                 </Button>
-                {showQRCode && (
-                  <div className="mt-4">
-                    <QRCodeCanvas
-                      value={`http://localhost:3000/api/barang?id=${id}`}
-                      size={128}
-                      level="H"
-                      includeMargin
-                    />
-                  </div>
-                )}
               </div>
             </div>
           </>

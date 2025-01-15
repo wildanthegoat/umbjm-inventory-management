@@ -15,7 +15,6 @@ export function NavMain({ items }) {
     <SidebarMenu>
       {items.map((item) => {
         const isActive = pathname === item.url;
-
         return (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton asChild isActive={isActive}>

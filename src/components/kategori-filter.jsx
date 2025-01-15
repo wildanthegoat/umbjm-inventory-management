@@ -47,7 +47,7 @@ export function KategoriFilter({ onSelectKategori }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[150px] justify-between"
+          className="w-[140px] justify-between"
         >
           {value
             ? kategoriData.find((item) => item.value === value)?.label
