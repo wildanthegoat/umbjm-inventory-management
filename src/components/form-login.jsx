@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation'; // Correct import for useRouter
 import { toast, Toaster } from 'sonner';
+import Image from 'next/image';
 
 const FormLogin = () => {
   const { register, handleSubmit } = useForm(); // Add register to useForm
@@ -36,6 +37,21 @@ const FormLogin = () => {
   };
 
   return (
+    <div className="flex flex-col items-center justify-center space-y-6">
+      <div className="flex flex-col items-center space-y-4">
+        <div className="relative w-16 h-16 md:w-24 md:h-24 ">
+        <Image
+              src="/logo-umbjm.png"
+              alt="UMBJM Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+        </div>
+        <h1 className="text-xl font-bold text-center text-neutral-50">
+          UMBJM Inventory Management
+        </h1>
+      </div>
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl flex justify-center">Login</CardTitle>
@@ -74,6 +90,7 @@ const FormLogin = () => {
         </form>
       </CardContent>
     </Card>
+    </div>
   );
 };
 
