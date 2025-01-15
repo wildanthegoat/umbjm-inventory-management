@@ -11,6 +11,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FilePenLine } from "lucide-react";
@@ -19,9 +27,9 @@ import { toast } from "sonner";
 
 export const UpdateLokasi = ({ lokasi }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [kampus, setKampus] = useState("");
-  const [gedung, setGedung] = useState("");
-  const [ruangan, setRuangan] = useState("");
+  const [kampus, setKampus] = useState(lokasi.kampus);
+  const [gedung, setGedung] = useState(lokasi.gedung);
+  const [ruangan, setRuangan] = useState(lokasi.ruangan);
 
   const queryClient = useQueryClient();
 
@@ -67,17 +75,25 @@ export const UpdateLokasi = ({ lokasi }) => {
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="kampus" className="text-right">
-                Nama Kampus
+                Kampus
               </Label>
-              <Input
-                id="kampus"
+              <Select 
+                onValueChange={(value) => setKampus(value)}
                 value={kampus}
-                onChange={(e) => setKampus(e.target.value)}
-                className="col-span-3"
-                placeholder="Masukkan Nama Kampus"
-              />
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Pilih Kampus" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="Kampus Utama">Kampus Utama</SelectItem>
+                    <SelectItem value="Kampus 1">Kampus 1</SelectItem>
+                    <SelectItem value="Kampus 2">Kampus 2</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="gedung" className="text-right">

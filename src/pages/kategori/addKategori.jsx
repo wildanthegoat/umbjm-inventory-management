@@ -54,7 +54,7 @@ export function AddKategori() {
           <Plus className="mr-2 h-4 w-4" /> Tambah Kategori
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[525px] bg-neutral-50">
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>Tambah Kategori</DialogTitle>
           <DialogDescription>Masukkan data Kategori</DialogDescription>

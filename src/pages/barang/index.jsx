@@ -71,11 +71,13 @@ const BarangPage = () => {
     if (selectedKategori) {
       filtered = filtered.filter((item) => item.kategori.id === selectedKategori);
     }
-    // location filter
+  
+    // Apply the location filter
     if (selectedLokasi.kampus) {
-      filtered = filtered.filter((item) => item.lokasi.id === selectedLokasi);
+      filtered = filtered.filter((item) => item.lokasi.kampus === selectedLokasi.kampus);
     }
-    // global search filter
+  
+    // Apply the global search filter
     return filterData(filtered, [
       "nama_barang",
       "kondisi",
@@ -88,14 +90,15 @@ const BarangPage = () => {
     ]);
   }, [data, selectedKategori, selectedLokasi, filterData]);
   
+  
   const { data: session } = useSession();
   const userRole = session?.user?.role;
 
   const handleKategoriSelect = (kategoriId) => {
     setSelectedKategori(kategoriId);
   };
-  const handleLokasiSelect = (lokasiId) => {
-    setSelectedLokasi(lokasiId);
+  const handleLokasiSelect = (kampus) => {
+    setSelectedLokasi({ ...selectedLokasi, kampus });
   };
   
   return (

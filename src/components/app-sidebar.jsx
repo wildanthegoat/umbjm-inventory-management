@@ -1,12 +1,5 @@
 import React from "react";
 import Image from 'next/image';
-import {
-  Home,
-  Package,
-  MapPin,
-  UserRound,
-  Boxes,
-} from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,
@@ -17,42 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import logo from "../../public/logo-umbjm.png";
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Home",
-      url: "/dashboard",
-      icon: Home,
-    },
-    {
-      title: "Barang",
-      url: "/barang",
-      icon: Package,
-    },
-    {
-      title: "Kategori",
-      url: "/kategori",
-      icon: Boxes,
-    },
-    {
-      title: "Lokasi",
-      url: "/lokasi",
-      icon: MapPin,
-      badge: "10",
-    },
-    {
-      title: "User",
-      url: "/user",
-      icon: UserRound,
-      badge: "10",
-    },
-  ],
-};
-
-export function AppSidebar({
-  ...props
-}) {
+export function AppSidebar({ ...props }) {
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>
@@ -67,7 +25,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

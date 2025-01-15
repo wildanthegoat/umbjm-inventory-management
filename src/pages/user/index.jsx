@@ -29,6 +29,7 @@ import { AddUser } from "./addUser";
 import { UpdateUser } from "./updateUser";
 import { DeleteUser } from "./deleteUser";
 import { RoleBasedAccess } from "@/function/roleAccess";
+import { useSession } from "next-auth/react";
 
 const UserPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
@@ -45,6 +46,7 @@ const UserPage = () => {
     });
   
   const filteredData = filterData(data || [], ["name", "username", "role", "divisi"]);
+  const { data: session } = useSession();
   const userRole = session?.user?.role;
 
   return (

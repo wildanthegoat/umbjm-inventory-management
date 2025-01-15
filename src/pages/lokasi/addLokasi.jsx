@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,32 +10,47 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
-import { addLokasi } from '@/function/lokasi';
-import { toast } from "sonner"
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Plus } from "lucide-react";
+import { addLokasi } from "@/function/lokasi";
+import { toast } from "sonner";
 
 export function AddLokasi() {
   const [isOpen, setIsOpen] = useState(false);
-  const [kampus, setKampus] = useState('');
-  const [gedung, setGedung] = useState('');
-  const [ruangan, setRuangan] = useState('');
+  const [kampus, setKampus] = useState("");
+  const [gedung, setGedung] = useState("");
+  const [ruangan, setRuangan] = useState("");
+  const [availableGedung, setAvailableGedung] = useState([]); // State for "Nama Gedung" options
   const queryClient = useQueryClient();
+
+  const kampusGedungOptions = {
+    "Kampus Utama": ["Masjid", "Teknik", "Rektorat"],
+    "Kampus 1": ["Mas Mansyur", "A. Dahlan", "Buya Hamka", "A.R. Fachruddin", "Rektorat"],
+    "Kampus 2": ["Gedung 1"], 
+  };
 
   const mutation = useMutation({
     mutationFn: addLokasi,
     onSuccess: () => {
-      queryClient.invalidateQueries('lokasi');
+      queryClient.invalidateQueries("lokasi");
       setIsOpen(false);
-      toast.success('Lokasi berhasil ditambahkan!');
-      setKampus('');
-      setGedung('');
-      setRuangan('');
+      toast.success("Lokasi berhasil ditambahkan!");
+      setKampus("");
+      setGedung("");
+      setRuangan("");
     },
     onError: () => {
-      toast.error('Gagal menambahkan lokasi!');
+      toast.error("Gagal menambahkan lokasi!");
     },
   });
 
@@ -44,54 +59,78 @@ export function AddLokasi() {
     mutation.mutate({ kampus, gedung, ruangan });
   };
 
+  const handleKampusChange = (value) => {
+    setKampus(value);
+    setAvailableGedung(kampusGedungOptions[value] || []); 
+    setGedung(""); 
+  };
+
   const handleOpenChange = (isOpen) => {
     setIsOpen(isOpen);
     if (isOpen) {
-      setKampus('');
-      setGedung('');
-      setRuangan('');
+      setKampus("");
+      setGedung("");
+      setRuangan("");
+      setAvailableGedung([]);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button >
+        <Button>
           <Plus className="mr-2 h-4 w-4" /> Tambah Lokasi
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>Tambah Lokasi</DialogTitle>
-          <DialogDescription>
-            Masukkan data Lokasi
-          </DialogDescription>
+          <DialogDescription>Masukkan data Lokasi</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="kampus" className="text-right">
-                Nama Kampus
+                Kampus
               </Label>
-              <Input
-                id="kampus"
+              <Select
+                onValueChange={handleKampusChange}
                 value={kampus}
-                onChange={(e) => setKampus(e.target.value)}
-                className="col-span-3"
-                placeholder="Masukkan Nama Kampus"
-              />
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Pilih Kampus" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="Kampus Utama">Kampus Utama</SelectItem>
+                    <SelectItem value="Kampus 1">Kampus 1</SelectItem>
+                    <SelectItem value="Kampus 2">Kampus 2</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="gedung" className="text-right">
                 Nama Gedung
               </Label>
-              <Input
-                id="gedung"
+              <Select
+                onValueChange={(value) => setGedung(value)}
                 value={gedung}
-                onChange={(e) => setGedung(e.target.value)}
-                className="col-span-3"
-                placeholder="Masukkan Nama Gedung"
-              />
+                disabled={!availableGedung.length} // Disable if no options are available
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Pilih Gedung" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {availableGedung.map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="ruangan" className="text-right">

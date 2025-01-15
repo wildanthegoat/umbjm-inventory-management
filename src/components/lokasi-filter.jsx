@@ -29,7 +29,7 @@ export function LokasiFilter({ onSelectLokasi }) {
         const response = await fetch("/api/lokasi");
         const data = await response.json();
         const formattedData = data.map((item) => ({
-          value: item.id,
+          value: item.kampus,
           label: item.kampus,
         }));
         setLokasiData(formattedData);
@@ -52,7 +52,7 @@ export function LokasiFilter({ onSelectLokasi }) {
         >
           {value
             ? lokasiData.find((item) => item.value === value)?.label
-            : "Pilih Lokasi"}
+            : "Pilih Lokasi Kampus"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -62,12 +62,13 @@ export function LokasiFilter({ onSelectLokasi }) {
           <CommandList>
             <CommandEmpty>Lokasi tidak ditemukan.</CommandEmpty>
             <CommandGroup>
+              {/* Option for selecting all locations */}
               <CommandItem
                 value="all"
                 onSelect={() => {
                   setValue("");
                   setOpen(false);
-                  onSelectLokasi("");
+                  onSelectLokasi(""); // Pass empty string for "all" locations
                 }}
               >
                 Semua Lokasi
@@ -78,15 +79,17 @@ export function LokasiFilter({ onSelectLokasi }) {
                   )}
                 />
               </CommandItem>
+              {/* Map over lokasiData for dynamic items */}
               {lokasiData.map((item) => (
                 <CommandItem
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    const selectedValue = currentValue === value ? "" : currentValue;
+                    const selectedValue =
+                      currentValue === value ? "" : currentValue;
                     setValue(selectedValue);
                     setOpen(false);
-                    onSelectLokasi(selectedValue);
+                    onSelectLokasi(selectedValue); // Pass the selected location
                   }}
                 >
                   {item.label}
