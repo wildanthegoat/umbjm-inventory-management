@@ -30,8 +30,27 @@ export const UpdateLokasi = ({ lokasi }) => {
   const [kampus, setKampus] = useState(lokasi.kampus);
   const [gedung, setGedung] = useState(lokasi.gedung);
   const [ruangan, setRuangan] = useState(lokasi.ruangan);
+  const [availableGedung, setAvailableGedung] = useState([]);
 
   const queryClient = useQueryClient();
+
+  // Define kampus-to-gedung mapping
+  const kampusGedungOptions = {
+    "Kampus Utama": ["Masjid", "Teknik", "Rektorat"],
+    "Kampus 1": [
+      "Mas Mansyur",
+      "A. Dahlan",
+      "Buya Hamka",
+      "A.R. Fachruddin",
+      "Rektorat",
+    ],
+    "Kampus 2": ["Gedung 1", "Gedung 2", "Gedung 3"], // Add more as needed
+  };
+
+  useEffect(() => {
+    // Set available gedung options based on the initial kampus value
+    setAvailableGedung(kampusGedungOptions[kampus] || []);
+  }, [kampus]);
 
   const mutation = useMutation({
     mutationFn: updateLokasi,
@@ -50,15 +69,22 @@ export const UpdateLokasi = ({ lokasi }) => {
     mutation.mutate({ id: lokasi.id, kampus, gedung, ruangan });
   };
 
+  const handleKampusChange = (value) => {
+    setKampus(value);
+    setAvailableGedung(kampusGedungOptions[value] || []); // Update gedung options
+    setGedung(""); // Reset gedung selection
+  };
+
   const handleOpenChange = (isOpen) => {
     setIsOpen(isOpen);
     if (!isOpen) {
-      setKampus("");
-      setGedung("");
-      setRuangan("");
+      setKampus(lokasi.kampus);
+      setGedung(lokasi.gedung);
+      setRuangan(lokasi.ruangan);
+      setAvailableGedung(kampusGedungOptions[lokasi.kampus] || []);
     }
   };
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -69,20 +95,15 @@ export const UpdateLokasi = ({ lokasi }) => {
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>Update Lokasi</DialogTitle>
-          <DialogDescription>
-            Perbarui data Lokasi
-          </DialogDescription>
+          <DialogDescription>Perbarui data Lokasi</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="kampus" className="text-right">
                 Kampus
               </Label>
-              <Select 
-                onValueChange={(value) => setKampus(value)}
-                value={kampus}
-              >
+              <Select onValueChange={handleKampusChange} value={kampus}>
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Pilih Kampus" />
                 </SelectTrigger>
@@ -99,13 +120,24 @@ export const UpdateLokasi = ({ lokasi }) => {
               <Label htmlFor="gedung" className="text-right">
                 Nama Gedung
               </Label>
-              <Input
-                id="gedung"
+              <Select
+                onValueChange={(value) => setGedung(value)}
                 value={gedung}
-                onChange={(e) => setGedung(e.target.value)}
-                className="col-span-3"
-                placeholder="Masukkan Nama Gedung"
-              />
+                disabled={!availableGedung.length} // Disable if no options are available
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Pilih Gedung" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {availableGedung.map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="ruangan" className="text-right">
@@ -122,7 +154,7 @@ export const UpdateLokasi = ({ lokasi }) => {
           </div>
           <DialogFooter>
             <Button type="submit" disabled={mutation.isLoading}>
-                {mutation.isLoading ? "Updating..." : "Update"}
+              {mutation.isLoading ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>
         </form>
