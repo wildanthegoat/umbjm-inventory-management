@@ -48,9 +48,9 @@ const FormLogin = () => {
               priority
             />
         </div>
-        <h1 className="text-xl font-bold text-center text-neutral-50">
+        <a className="text-xl text-center text-neutral-50">
           UMBJM Inventory Management
-        </h1>
+        </a>
       </div>
     <Card className="mx-auto max-w-sm">
       <CardHeader>
