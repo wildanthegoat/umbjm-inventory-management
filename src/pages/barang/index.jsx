@@ -73,13 +73,7 @@ const BarangPage = () => {
     }
     // location filter
     if (selectedLokasi.kampus) {
-      filtered = filtered.filter((item) => item.lokasi.kampus === selectedLokasi.kampus);
-    }
-    if (selectedLokasi.gedung) {
-      filtered = filtered.filter((item) => item.lokasi.gedung === selectedLokasi.gedung);
-    }
-    if (selectedLokasi.ruangan) {
-      filtered = filtered.filter((item) => item.lokasi.ruangan === selectedLokasi.ruangan);
+      filtered = filtered.filter((item) => item.lokasi.id === selectedLokasi);
     }
     // global search filter
     return filterData(filtered, [
@@ -100,9 +94,10 @@ const BarangPage = () => {
   const handleKategoriSelect = (kategoriId) => {
     setSelectedKategori(kategoriId);
   };
-  const handleLokasiSelect = (lokasi) => {
-    setSelectedLokasi(lokasi);
+  const handleLokasiSelect = (lokasiId) => {
+    setSelectedLokasi(lokasiId);
   };
+  
   return (
     <div>
       <Head>

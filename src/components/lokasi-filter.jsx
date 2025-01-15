@@ -30,7 +30,7 @@ export function LokasiFilter({ onSelectLokasi }) {
         const data = await response.json();
         const formattedData = data.map((item) => ({
           value: item.id,
-          label: `${item.kampus} - ${item.gedung} - ${item.ruangan}`,
+          label: item.kampus,
         }));
         setLokasiData(formattedData);
       } catch (error) {
