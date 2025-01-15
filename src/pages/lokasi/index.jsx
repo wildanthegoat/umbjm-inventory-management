@@ -27,9 +27,10 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
 import { useColumnVisibility } from "@/function/useColumnVisibility";
-import { AlertDelete } from "@/components/alert-delete";
 import { UpdateLokasi } from "./updateLokasi";
 import { DeleteLokasi } from "./deleteLokasi";
+import { useSession } from "next-auth/react";
+import { RoleBasedAccess } from "@/function/roleAccess";
 
 const LokasiPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
@@ -50,6 +51,8 @@ const LokasiPage = () => {
   }
 
   const filteredData = filterData(data || [], ["kampus", "gedung", "ruangan"]);
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
 
   return (
     <div>
@@ -58,7 +61,9 @@ const LokasiPage = () => {
       </Head>
       <div className="mt-3 mb-3 mx-auto h-full w-full max-w-5xl rounded-xl flex items-start justify-between">
         <Heading title="Lokasi" />
+        <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
         <AddLokasi />
+        </RoleBasedAccess>
       </div>
       <Separator />
       <div className="mt-3 mx-auto h-full w-full max-w-5xl rounded-xl">
@@ -119,6 +124,7 @@ const LokasiPage = () => {
                       {visibleColumns.ruangan && (
                         <TableCell>{lokasi.ruangan}</TableCell>
                       )}
+                              <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -136,6 +142,7 @@ const LokasiPage = () => {
                           />{" "}
                         </DropdownMenuContent>
                       </DropdownMenu>
+                      </RoleBasedAccess>
                     </TableRow>
                   ))}
             </TableBody>

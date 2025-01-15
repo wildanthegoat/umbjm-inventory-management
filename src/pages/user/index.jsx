@@ -28,6 +28,7 @@ import { fetchUser } from "@/function/user";
 import { AddUser } from "./addUser";
 import { UpdateUser } from "./updateUser";
 import { DeleteUser } from "./deleteUser";
+import { RoleBasedAccess } from "@/function/roleAccess";
 
 const UserPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
@@ -44,6 +45,7 @@ const UserPage = () => {
     });
   
   const filteredData = filterData(data || [], ["name", "username", "role", "divisi"]);
+  const userRole = session?.user?.role;
 
   return (
     <div>
@@ -54,7 +56,9 @@ const UserPage = () => {
         <Heading
           title="Users"
         />
+        <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
         <AddUser/>
+        </RoleBasedAccess>
       </div>
       <Separator />
       <div className="mt-3 mx-auto h-full w-full max-w-5xl rounded-xl">

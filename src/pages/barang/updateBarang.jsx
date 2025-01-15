@@ -23,12 +23,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { toast } from "sonner";
-import { fetchBarangById, updateBarang } from "@/function/barang";
+import { updateBarang } from "@/function/barang";
 import { FilePenLine } from "lucide-react";
 
 export function UpdateBarang({ barang }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [nama_barang, setNamaBarang] = useState("");
   const [jumlah, setJumlah] = useState("");
   const [kategoriId, setKategori] = useState("");
@@ -40,38 +41,21 @@ export function UpdateBarang({ barang }) {
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
   const queryClient = useQueryClient();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { data: fetchedBarang } = useQuery({
-    queryKey: ["barang", barang],
-    queryFn: () => fetchBarangById(barang),
-  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const kategoriResponse = await fetch("/api/kategori");
-        const kategoriData = await kategoriResponse.json();
-        setCategories(kategoriData);
-  
-        const lokasiResponse = await fetch("/api/lokasi");
-        const lokasiData = await lokasiResponse.json();
-        setLocations(lokasiData);
+        const [kategoriResponse, lokasiResponse] = await Promise.all([
+          fetch("/api/kategori"),
+          fetch("/api/lokasi"),
+        ]);
+        setCategories(await kategoriResponse.json());
+        setLocations(await lokasiResponse.json());
       } catch (error) {
         console.error("Error fetching categories or locations:", error);
       }
     };
-  
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/kategori")
-      .then((response) => response.json())
-      .then((data) => setCategories(data));
-    fetch("/api/lokasi")
-      .then((response) => response.json())
-      .then((data) => setLocations(data));
   }, []);
 
   const mutation = useMutation({
@@ -96,7 +80,7 @@ export function UpdateBarang({ barang }) {
       jumlah,
       harga,
       deskripsi,
-      tanggal,
+      tanggal_masuk: tanggal,
     });
     handleOpenChange(false);
   };
@@ -104,16 +88,17 @@ export function UpdateBarang({ barang }) {
   const handleOpenChange = (isOpen) => {
     setIsOpen(isOpen);
     if (isOpen) {
-      setNamaBarang("");
-      setJumlah("");
-      setKategori("");
-      setLokasi("");
-      setKondisi("");
-      setHarga("");
-      setDeskripsi("");
-      setTanggal(null);
+      setNamaBarang(barang.nama_barang || "");
+      setJumlah(barang.jumlah || "");
+      setKategori(barang.kategoriId || "");
+      setLokasi(barang.lokasiId || "");
+      setKondisi(barang.kondisi || "");
+      setHarga(barang.harga || "");
+      setDeskripsi(barang.deskripsi || "");
+      setTanggal(barang.tanggal_masuk ? format(new Date(barang.tanggal_masuk), "yyyy-MM-dd") : "");
     }
   };
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

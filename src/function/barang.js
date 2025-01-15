@@ -36,7 +36,8 @@ export const addBarang = async (barangData) => {
     });
   
     if (!res.ok) {
-      throw new Error('Failed to update barang');
+      const errorDetails = await res.json();
+      throw new Error(errorDetails.error || 'Failed to update barang');
     }
     return res.json();
   };

@@ -28,6 +28,8 @@ import { fetchKategori } from "@/function/kategori";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
 import { UpdateKategori } from "./updateKategori";
 import { DeleteKategori } from "./deleteKategori";
+import { useSession } from "next-auth/react";
+import { RoleBasedAccess } from "@/function/roleAccess";
 
 const KategoriPage = () => {
   const { globalFilter, handleGlobalFilterChange, filterData } =
@@ -42,6 +44,8 @@ const KategoriPage = () => {
   }
 
   const filteredData = filterData(data || [], ["nama_kategori"]);
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
 
   return (
     <div>
@@ -50,7 +54,9 @@ const KategoriPage = () => {
       </Head>
       <div className="mt-3 mb-3 mx-auto h-full w-full max-w-5xl rounded-xl flex items-start justify-between">
         <Heading title="Kategori" />
+        <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
         <AddKategori />
+        </RoleBasedAccess>
       </div>
       <Separator />
       <div className="mt-3 mx-auto h-full w-full max-w-5xl rounded-xl">
@@ -67,7 +73,7 @@ const KategoriPage = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Nama Kategori</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -83,6 +89,7 @@ const KategoriPage = () => {
                     <TableRow key={kategori.id}>
                       <TableCell>{kategori.nama_kategori}</TableCell>
                       <TableCell>
+                      <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -97,6 +104,7 @@ const KategoriPage = () => {
                               <DeleteKategori kategoriId={kategori.id} namaKategori={kategori.nama_kategori} />
                           </DropdownMenuContent>
                         </DropdownMenu>
+                      </RoleBasedAccess>
                       </TableCell>
                     </TableRow>
                   ))}
