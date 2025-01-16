@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import Head from "next/head";
 import { useQuery } from "@tanstack/react-query";
 import { Heading } from "@/components/ui/heading";
@@ -30,24 +31,52 @@ import { UpdateUser } from "./updateUser";
 import { DeleteUser } from "./deleteUser";
 import { RoleBasedAccess } from "@/function/roleAccess";
 import { useSession } from "next-auth/react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const ITEMS_PER_PAGE = 10;
 
 const UserPage = () => {
-  const { globalFilter, handleGlobalFilterChange, filterData } =
-    useGlobalFilter();
+  const { globalFilter, handleGlobalFilterChange, filterData } = useGlobalFilter();
   const { visibleColumns, handleColumnVisibilityChange } = useColumnVisibility({
     name: true,
     username: true,
     role: true,
     divisi: true,
   });
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { data, isLoading, error } = useQuery({
-      queryKey: ["user"],
-      queryFn: fetchUser,
-    });
-  
-  const filteredData = filterData(data || [], ["name", "username", "role", "divisi"]);
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
+
   const { data: session } = useSession();
   const userRole = session?.user?.role;
+
+  if (error) {
+    return <div>Error loading data: {error.message}</div>;
+  }
+
+  // Memoize filtered data
+  const filteredData = useMemo(
+    () => filterData(data || [], ["name", "username", "role", "divisi"]),
+    [data, filterData]
+  );
+
+  // Memoize paginated data
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredData, currentPage]);
+
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
   return (
     <div>
@@ -55,11 +84,9 @@ const UserPage = () => {
         <title>User</title>
       </Head>
       <div className="mt-3 mb-3 mx-auto h-full w-full max-w-5xl rounded-xl flex items-start justify-between">
-        <Heading
-          title="Users"
-        />
+        <Heading title="Users" />
         <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
-        <AddUser/>
+          <AddUser />
         </RoleBasedAccess>
       </div>
       <Separator />
@@ -106,43 +133,77 @@ const UserPage = () => {
               {isLoading
                 ? [...Array(5)].map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={3}>
+                      <TableCell colSpan={5}>
                         <Skeleton className="h-4 w-full" />
                       </TableCell>
                     </TableRow>
                   ))
-                : filteredData.map((user) => (
+                : paginatedData.map((user) => (
                     <TableRow key={user.id}>
-                      {visibleColumns.name && (
-                        <TableCell>{user.name}</TableCell>
-                      )}
+                      {visibleColumns.name && <TableCell>{user.name}</TableCell>}
                       {visibleColumns.username && (
                         <TableCell>{user.username}</TableCell>
                       )}
-                      {visibleColumns.role && (
-                        <TableCell>{user.role}</TableCell>
-                      )}
+                      {visibleColumns.role && <TableCell>{user.role}</TableCell>}
                       {visibleColumns.divisi && (
                         <TableCell>{user.divisi}</TableCell>
                       )}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <UpdateUser user={user} />
-                            <DropdownMenuSeparator/>
-                            <DeleteUser userId={user.id} userName={user.name} />
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <TableCell>
+                        <RoleBasedAccess
+                          role={["SUPER_ADMIN", "ADMIN"]}
+                          userRole={userRole}
+                        >
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <UpdateUser user={user} />
+                              <DropdownMenuSeparator />
+                              <DeleteUser userId={user.id} userName={user.name} />
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </RoleBasedAccess>
+                      </TableCell>
                     </TableRow>
                   ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="flex justify-end mt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    isActive={currentPage === i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>

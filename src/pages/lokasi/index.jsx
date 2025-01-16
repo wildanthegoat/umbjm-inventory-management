@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import Head from "next/head";
 import { useQuery } from "@tanstack/react-query";
 import { Heading } from "@/components/ui/heading";
@@ -31,28 +32,51 @@ import { UpdateLokasi } from "./updateLokasi";
 import { DeleteLokasi } from "./deleteLokasi";
 import { useSession } from "next-auth/react";
 import { RoleBasedAccess } from "@/function/roleAccess";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const ITEMS_PER_PAGE = 7;
 
 const LokasiPage = () => {
-  const { globalFilter, handleGlobalFilterChange, filterData } =
-    useGlobalFilter();
+  const { globalFilter, handleGlobalFilterChange, filterData } = useGlobalFilter();
   const { visibleColumns, handleColumnVisibilityChange } = useColumnVisibility({
     kampus: true,
     gedung: true,
     ruangan: true,
   });
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["lokasi"],
     queryFn: fetchLokasi,
   });
 
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+
   if (error) {
     return <div>Error loading data: {error.message}</div>;
   }
 
-  const filteredData = filterData(data || [], ["kampus", "gedung", "ruangan"]);
-  const { data: session } = useSession();
-  const userRole = session?.user?.role;
+  // Memoize filtered data
+  const filteredData = useMemo(
+    () => filterData(data || [], ["kampus", "gedung", "ruangan"]),
+    [data, filterData]
+  );
+
+  // Memoize paginated data
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredData, currentPage]);
+
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
   return (
     <div>
@@ -62,7 +86,7 @@ const LokasiPage = () => {
       <div className="mt-3 mb-3 mx-auto h-full w-full max-w-5xl rounded-xl flex items-start justify-between">
         <Heading title="Lokasi" />
         <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
-        <AddLokasi />
+          <AddLokasi />
         </RoleBasedAccess>
       </div>
       <Separator />
@@ -108,12 +132,12 @@ const LokasiPage = () => {
               {isLoading
                 ? [...Array(5)].map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={3}>
+                      <TableCell colSpan={4}>
                         <Skeleton className="h-4 w-full" />
                       </TableCell>
                     </TableRow>
                   ))
-                : filteredData.map((lokasi) => (
+                : paginatedData.map((lokasi) => (
                     <TableRow key={lokasi.id}>
                       {visibleColumns.kampus && (
                         <TableCell>{lokasi.kampus}</TableCell>
@@ -124,29 +148,65 @@ const LokasiPage = () => {
                       {visibleColumns.ruangan && (
                         <TableCell>{lokasi.ruangan}</TableCell>
                       )}
-                              <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <UpdateLokasi lokasi={lokasi} />
-                          <DropdownMenuSeparator />
-                          <DeleteLokasi
-                            lokasiId={lokasi.id}
-                            lokasi={`${lokasi.kampus} - ${lokasi.gedung} - ${lokasi.ruangan}`}
-                          />{" "}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      </RoleBasedAccess>
+                      <TableCell>
+                        <RoleBasedAccess
+                          role={["SUPER_ADMIN", "ADMIN"]}
+                          userRole={userRole}
+                        >
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <UpdateLokasi lokasi={lokasi} />
+                              <DropdownMenuSeparator />
+                              <DeleteLokasi
+                                lokasiId={lokasi.id}
+                                lokasi={`${lokasi.kampus} - ${lokasi.gedung} - ${lokasi.ruangan}`}
+                              />
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </RoleBasedAccess>
+                      </TableCell>
                     </TableRow>
                   ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="flex justify-end mt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    isActive={currentPage === i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>

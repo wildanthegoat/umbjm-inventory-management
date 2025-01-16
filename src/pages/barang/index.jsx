@@ -36,10 +36,19 @@ import { UpdateBarang } from "./updateBarang";
 import { DeleteBarang } from "./deleteBarang";
 import { useSession } from "next-auth/react";
 import { RoleBasedAccess } from "@/function/roleAccess";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+const ITEMS_PER_PAGE = 7;
 
 const BarangPage = () => {
-  const { globalFilter, handleGlobalFilterChange, filterData } =
-    useGlobalFilter();
+  const { globalFilter, handleGlobalFilterChange, filterData } = useGlobalFilter();
   const [selectedKategori, setSelectedKategori] = useState("");
   const [selectedLokasi, setSelectedLokasi] = useState({
     kampus: "",
@@ -60,23 +69,27 @@ const BarangPage = () => {
     queryKey: ["barang"],
     queryFn: fetchBarang,
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+
   if (error) {
     return <div>Error loading data: {error.message}</div>;
   }
+
   const filteredData = useMemo(() => {
     if (!data) return [];
     let filtered = data;
-  
+
     // Apply the category filter
     if (selectedKategori) {
       filtered = filtered.filter((item) => item.kategori.id === selectedKategori);
     }
-  
+
     // Apply the location filter
     if (selectedLokasi.kampus) {
       filtered = filtered.filter((item) => item.lokasi.kampus === selectedLokasi.kampus);
     }
-  
+
     // Apply the global search filter
     return filterData(filtered, [
       "nama_barang",
@@ -89,18 +102,25 @@ const BarangPage = () => {
       "lokasi.ruangan",
     ]);
   }, [data, selectedKategori, selectedLokasi, filterData]);
-  
-  
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredData, currentPage]);
+
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+
   const { data: session } = useSession();
   const userRole = session?.user?.role;
 
   const handleKategoriSelect = (kategoriId) => {
     setSelectedKategori(kategoriId);
   };
+
   const handleLokasiSelect = (kampus) => {
     setSelectedLokasi({ ...selectedLokasi, kampus });
   };
-  
+
   return (
     <div>
       <Head>
@@ -122,7 +142,7 @@ const BarangPage = () => {
             className="max-w-sm"
           />
           <KategoriFilter onSelectKategori={handleKategoriSelect} />
-          <LokasiFilter onSelectLokasi={handleLokasiSelect}/>
+          <LokasiFilter onSelectLokasi={handleLokasiSelect} />
           <ExportExcel />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -157,9 +177,7 @@ const BarangPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                {visibleColumns.nama_barang && (
-                  <TableHead>Nama Barang</TableHead>
-                )}
+                {visibleColumns.nama_barang && <TableHead>Nama Barang</TableHead>}
                 {visibleColumns.kondisi && <TableHead>Kondisi</TableHead>}
                 {visibleColumns.jumlah && <TableHead>Jumlah</TableHead>}
                 {visibleColumns.harga && <TableHead>Harga</TableHead>}
@@ -173,12 +191,12 @@ const BarangPage = () => {
               {isLoading
                 ? [...Array(5)].map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={3}>
+                      <TableCell colSpan={8}>
                         <Skeleton className="h-4 w-full" />
                       </TableCell>
                     </TableRow>
                   ))
-                : filteredData.map((barang) => (
+                : paginatedData.map((barang) => (
                     <TableRow key={barang.id}>
                       {visibleColumns.nama_barang && (
                         <TableCell>{barang.nama_barang}</TableCell>
@@ -218,10 +236,16 @@ const BarangPage = () => {
                               Detail Barang
                             </Link>
                           </DropdownMenuItem>
-                          <RoleBasedAccess role={["SUPER_ADMIN", "ADMIN"]} userRole={userRole}>
-                              <UpdateBarang barang={barang} />
-                              <DropdownMenuSeparator />
-                              <DeleteBarang barangId={barang.id} namaBarang={barang.nama_barang} />
+                          <RoleBasedAccess
+                            role={["SUPER_ADMIN", "ADMIN"]}
+                            userRole={userRole}
+                          >
+                            <UpdateBarang barang={barang} />
+                            <DropdownMenuSeparator />
+                            <DeleteBarang
+                              barangId={barang.id}
+                              namaBarang={barang.nama_barang}
+                            />
                           </RoleBasedAccess>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -229,6 +253,37 @@ const BarangPage = () => {
                   ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="flex justify-end mt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    isActive={currentPage === i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>
