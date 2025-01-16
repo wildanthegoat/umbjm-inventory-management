@@ -88,7 +88,7 @@ export const UpdateLokasi = ({ lokasi }) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="w-full">
           <FilePenLine className="mr-2 h-4 w-4" /> Edit
         </Button>
       </DialogTrigger>
@@ -123,7 +123,7 @@ export const UpdateLokasi = ({ lokasi }) => {
               <Select
                 onValueChange={(value) => setGedung(value)}
                 value={gedung}
-                disabled={!availableGedung.length} // Disable if no options are available
+                disabled={!availableGedung.length}
               >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Pilih Gedung" />

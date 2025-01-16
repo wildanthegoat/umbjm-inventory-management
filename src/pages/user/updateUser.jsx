@@ -40,12 +40,12 @@ export function UpdateUser({ user }) {
       setUsername(user.username || "");
       setRole(user.role || "");
       setDivisi(user.divisi || "");
-      setPassword(""); // Leave password empty unless explicitly changed
+      setPassword(""); 
     }
   }, [user, isOpen]);
 
   const mutation = useMutation({
-    mutationFn: updateUser, // Ensure updateUser is correctly implemented
+    mutationFn: updateUser, 
     onSuccess: () => {
       queryClient.invalidateQueries("user");
       setIsOpen(false);
@@ -75,7 +75,7 @@ export function UpdateUser({ user }) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="w-full">
           <FilePenLine className="mr-2 h-4 w-4" /> Edit
         </Button>
       </DialogTrigger>

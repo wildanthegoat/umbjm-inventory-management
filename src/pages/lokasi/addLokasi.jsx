@@ -30,13 +30,13 @@ export function AddLokasi() {
   const [kampus, setKampus] = useState("");
   const [gedung, setGedung] = useState("");
   const [ruangan, setRuangan] = useState("");
-  const [availableGedung, setAvailableGedung] = useState([]); // State for "Nama Gedung" options
+  const [availableGedung, setAvailableGedung] = useState([]);
   const queryClient = useQueryClient();
 
   const kampusGedungOptions = {
     "Kampus Utama": ["Masjid", "Teknik", "Rektorat"],
     "Kampus 1": ["Mas Mansyur", "A. Dahlan", "Buya Hamka", "A.R. Fachruddin", "Rektorat"],
-    "Kampus 2": ["Gedung 1"], 
+    "Kampus 2": ["Gedung 1"],
   };
 
   const mutation = useMutation({
@@ -56,13 +56,28 @@ export function AddLokasi() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate all fields
+    if (!kampus.trim()) {
+      toast.error("Silahkan pilih kampus!");
+      return;
+    }
+    if (!gedung.trim()) {
+      toast.error("Silahkan pilih gedung!");
+      return;
+    }
+    if (!ruangan.trim()) {
+      toast.error("Silahkan masukkan nama ruangan!");
+      return;
+    }
+
     mutation.mutate({ kampus, gedung, ruangan });
   };
 
   const handleKampusChange = (value) => {
     setKampus(value);
-    setAvailableGedung(kampusGedungOptions[value] || []); 
-    setGedung(""); 
+    setAvailableGedung(kampusGedungOptions[value] || []);
+    setGedung("");
   };
 
   const handleOpenChange = (isOpen) => {
@@ -74,6 +89,8 @@ export function AddLokasi() {
       setAvailableGedung([]);
     }
   };
+
+  const isFormValid = kampus && gedung && ruangan.trim();
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -116,7 +133,7 @@ export function AddLokasi() {
               <Select
                 onValueChange={(value) => setGedung(value)}
                 value={gedung}
-                disabled={!availableGedung.length} // Disable if no options are available
+                disabled={!availableGedung.length}
               >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Pilih Gedung" />
@@ -146,7 +163,9 @@ export function AddLokasi() {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Tambah</Button>
+          <Button type="submit" disabled={!isFormValid || mutation.isLoading}>
+          {mutation.isLoading ? "Menambahkan..." : "Tambah"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -103,7 +103,7 @@ export function UpdateBarang({ barang }) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="w-fit">
+        <Button variant="ghost" className="w-full">
           <FilePenLine className="mr-2 h-4 w-4" /> Edit
         </Button>
       </DialogTrigger>

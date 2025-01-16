@@ -13,7 +13,6 @@ import ThemeToggle from '@/components/theme';
 
 const ProfileNav = () => {
   const { data } = useSession();
-  console.log(data);
   const formatRole = (role) => {
     if (!role) return '';
     return role

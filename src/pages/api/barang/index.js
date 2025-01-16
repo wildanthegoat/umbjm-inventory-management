@@ -140,8 +140,8 @@ export default async function handler(req, res) {
         where: { id },
         data: {
           nama_barang,
-          jumlah,
-          harga,
+          jumlah: parseInt(jumlah, 10),
+          harga: parseInt(harga, 10),
           kondisi,
           deskripsi,
           tanggal_masuk: parsedTanggalMasuk,

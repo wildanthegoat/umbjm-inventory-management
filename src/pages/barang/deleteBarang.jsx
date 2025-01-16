@@ -38,7 +38,7 @@ export const DeleteBarang = ({ barangId, namaBarang }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">
+        <Button variant="destructive" className="w-full">
           <Trash className="mr-2 h-4 w-4" /> Delete
         </Button>
       </AlertDialogTrigger>

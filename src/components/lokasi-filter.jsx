@@ -28,11 +28,16 @@ export function LokasiFilter({ onSelectLokasi }) {
       try {
         const response = await fetch("/api/lokasi");
         const data = await response.json();
-        const formattedData = data.map((item) => ({
-          value: item.kampus,
-          label: item.kampus,
+
+        // Remove duplicate kampus values
+        const uniqueKampus = Array.from(
+          new Set(data.map((item) => item.kampus))
+        ).map((kampus) => ({
+          value: kampus,
+          label: kampus,
         }));
-        setLokasiData(formattedData);
+
+        setLokasiData(uniqueKampus);
       } catch (error) {
         console.error("Error fetching lokasi:", error);
       }
@@ -79,7 +84,7 @@ export function LokasiFilter({ onSelectLokasi }) {
                   )}
                 />
               </CommandItem>
-              {/* Map over lokasiData for dynamic items */}
+              {/* Map over unique lokasiData for dynamic items */}
               {lokasiData.map((item) => (
                 <CommandItem
                   key={item.value}

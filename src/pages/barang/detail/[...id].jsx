@@ -7,6 +7,14 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import html2canvas from "html2canvas";
 
@@ -15,8 +23,7 @@ const BarangDetailPage = () => {
   const { id } = router.query;
   const [data, setData] = useState(null);
   const [umur, setUmur] = useState({ days: 0, months: 0, years: 0 });
-  const [showQRCode, setShowQRCode] = useState(false);
-  const qrRef = useRef(null); // Reference for QR code container
+  const qrRef = useRef(null); 
 
   useEffect(() => {
     if (!id) {
@@ -51,7 +58,7 @@ const BarangDetailPage = () => {
   const downloadQRCode = async () => {
     if (!qrRef.current) return;
     // Capture the QR code container as an image
-    const canvas = await html2canvas(qrRef.current, { scale: 4 });
+    const canvas = await html2canvas(qrRef.current, { scale: 8 });
     const image = canvas.toDataURL("image/png");
     // Create a download link
     const link = document.createElement("a");
@@ -121,20 +128,37 @@ const BarangDetailPage = () => {
               <Textarea value={data.deskripsi} readOnly />
             </div>
             <div className="mt-2 items-center flex">
-              <div>
-                <div ref={qrRef} className="mt-3 text-center">
-                  <p className="text-lg font-bold mb-2">{data.nama_barang}</p>
-                  <QRCodeCanvas
-                    value={`http://localhost:3000/api/barang?id=${id}`}
-                    size={256}
-                    level="H"
-                    includeMargin
-                  />
-                </div>
-                <Button className="mt-2 flex items-end" onClick={downloadQRCode}>
-                  Download QR Code
-                </Button>
-              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-blue-600">Generate QR Code</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Generate QR </DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div
+                      ref={qrRef}
+                      className="mt-3 flex flex-col items-center justify-center"
+                    >
+                      <p className="text-lg font-bold mb-2">
+                        {data.nama_barang}
+                      </p>
+                      <QRCodeCanvas
+                        value={`http://localhost:3000/api/barang?id=${id}`}
+                        size={256}
+                        level="H"
+                        includeMargin
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button className="mt-2" onClick={downloadQRCode}>
+                      Download QR Code
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </>
         )}

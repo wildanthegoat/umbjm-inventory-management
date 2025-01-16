@@ -53,7 +53,7 @@ export function UpdateKategori({ kategori }) {
   return (
     <Dialog open={isUpdateOpen} onOpenChange={handleUpdateChange} >
       <DialogTrigger asChild>
-        <Button variant="ghost" className="w-fit">
+        <Button variant="ghost" className="w-full">
           <FilePenLine className="mr-2 h-4 w-4" /> Edit
         </Button>
       </DialogTrigger>

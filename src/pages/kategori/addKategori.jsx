@@ -37,8 +37,13 @@ export function AddKategori() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!nama_kategori.trim()) {
+          toast.error("Silahkan pilih kampus!");
+          return;
+        }
     mutation.mutate({ nama_kategori });
   };
+  const isFormValid = nama_kategori.trim();
 
   const handleOpenChange = (isOpen) => {
     setIsOpen(isOpen);
@@ -46,7 +51,7 @@ export function AddKategori() {
       setKategori('');
     }
   };
-
+  
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -75,7 +80,7 @@ export function AddKategori() {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={mutation.isLoading}>
+            <Button type="submit" disabled={!isFormValid || mutation.isLoading}>
               {mutation.isLoading ? "Menambahkan..." : "Tambah"}
             </Button>
           </DialogFooter>
