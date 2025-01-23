@@ -145,7 +145,7 @@ const BarangDetailPage = () => {
                         {data.nama_barang}
                       </p>
                       <QRCodeCanvas
-                        value={`http://localhost:3000/api/barang?id=${id}`}
+                        value={`https://umbjm-inventory-management.vercel.app/api/barang?id=${id}`}
                         size={256}
                         level="H"
                         includeMargin
