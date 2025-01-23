@@ -25,11 +25,11 @@ import { FilePenLine } from "lucide-react";
 import { updateLokasi } from "@/function/lokasi"; // Update API function
 import { toast } from "sonner";
 
-const UpdateLokasi = ({ lokasi }) => {
+const UpdateLokasi = ({ lokasi = {} }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [kampus, setKampus] = useState(lokasi.kampus);
-  const [gedung, setGedung] = useState(lokasi.gedung);
-  const [ruangan, setRuangan] = useState(lokasi.ruangan);
+  const [kampus, setKampus] = useState(lokasi.kampus || "");
+  const [gedung, setGedung] = useState(lokasi.gedung || "");
+  const [ruangan, setRuangan] = useState(lokasi.ruangan || "");
   const [availableGedung, setAvailableGedung] = useState([]);
 
   const queryClient = useQueryClient();

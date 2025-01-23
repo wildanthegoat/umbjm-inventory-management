@@ -1,3 +1,4 @@
+// src/pages/kategori/updateKategori.jsx
 "use client";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -17,9 +18,9 @@ import { FilePenLine } from "lucide-react";
 import { updateKategori } from "@/function/kategori";
 import { toast } from "sonner";
 
-function UpdateKategori({ kategori }) {
+function UpdateKategori({ kategori = {} }) {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
-  const [nama_kategori, setNamaKategori] = useState(kategori.nama_kategori);
+  const [nama_kategori, setNamaKategori] = useState(kategori?.nama_kategori || "");
   const queryClient = useQueryClient();
 
   const mutation = useMutation({

@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AddLokasi } from "./addLokasi";
 import { fetchLokasi } from "@/function/lokasi";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,8 +27,9 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
 import { useColumnVisibility } from "@/function/useColumnVisibility";
-import { UpdateLokasi } from "./updateLokasi";
-import { DeleteLokasi } from "./deleteLokasi";
+import AddLokasi from "@/pages/lokasi/addLokasi";
+import UpdateLokasi from "@/pages/lokasi/updateLokasi";
+import DeleteLokasi from "@/pages/lokasi/deleteLokasi";
 import { useSession } from "next-auth/react";
 import { RoleBasedAccess } from "@/function/roleAccess";
 import {

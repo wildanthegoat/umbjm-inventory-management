@@ -25,15 +25,15 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown,  MoreHorizontal } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
-import { AddBarang } from "@/pages/barang/addBarang";
 import { fetchBarang } from "@/function/barang";
 import { useColumnVisibility } from "@/function/useColumnVisibility";
 import Link from "next/link";
 import { ExportExcel } from "@/components/excel";
 import { KategoriFilter } from "@/components/kategori-filter";
 import { LokasiFilter } from "@/components/lokasi-filter";
-import { UpdateBarang } from "./updateBarang";
-import { DeleteBarang } from "./deleteBarang";
+import AddBarang from "@/pages/barang/addBarang";
+import UpdateBarang from "@/pages/barang/updateBarang";
+import  DeleteBarang  from "@/pages/barang/deleteBarang";
 import { useSession } from "next-auth/react";
 import { RoleBasedAccess } from "@/function/roleAccess";
 import {

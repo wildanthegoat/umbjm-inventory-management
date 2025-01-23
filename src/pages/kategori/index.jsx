@@ -22,12 +22,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { AddKategori } from "./addKategori";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchKategori } from "@/function/kategori";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
-import { UpdateKategori } from "./updateKategori";
-import { DeleteKategori } from "./deleteKategori";
+import AddKategori from "@/pages/kategori/addKategori";
+import UpdateKategori from "@/pages/kategori/updateKategori";
+import DeleteKategori from "@/pages/kategori/deleteKategori";
 import { useSession } from "next-auth/react";
 import { RoleBasedAccess } from "@/function/roleAccess";
 import {

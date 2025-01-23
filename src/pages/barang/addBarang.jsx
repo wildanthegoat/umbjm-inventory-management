@@ -235,4 +235,4 @@ function AddBarang() {
   );
 }
 
-export default AddBarang
+export default AddBarang;

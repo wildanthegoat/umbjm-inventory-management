@@ -26,9 +26,9 @@ import { ChevronDown, MoreHorizontal } from "lucide-react";
 import { useGlobalFilter } from "@/function/useGlobalFilter";
 import { useColumnVisibility } from "@/function/useColumnVisibility";
 import { fetchUser } from "@/function/user";
-import { AddUser } from "./addUser";
-import { UpdateUser } from "./updateUser";
-import { DeleteUser } from "./deleteUser";
+import AddUser from "@/pages/user/addUser";
+import UpdateUser from "@/pages/user/updateUser";
+import DeleteUser from "@/pages/user/deleteUser";
 import { RoleBasedAccess } from "@/function/roleAccess";
 import { useSession } from "next-auth/react";
 import {
