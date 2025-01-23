@@ -28,7 +28,7 @@ import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 
-export function AddBarang() {
+function AddBarang() {
   const [namaBarang, setNamaBarang] = useState("");
   const [jumlah, setJumlah] = useState("");
   const [kategori, setKategori] = useState("");
@@ -234,3 +234,5 @@ export function AddBarang() {
     </Dialog>
   );
 }
+
+export default AddBarang

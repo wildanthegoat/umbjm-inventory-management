@@ -17,7 +17,7 @@ import { FilePenLine } from "lucide-react";
 import { updateKategori } from "@/function/kategori";
 import { toast } from "sonner";
 
-export function UpdateKategori({ kategori }) {
+function UpdateKategori({ kategori }) {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [nama_kategori, setNamaKategori] = useState(kategori.nama_kategori);
   const queryClient = useQueryClient();
@@ -90,3 +90,5 @@ export function UpdateKategori({ kategori }) {
     </Dialog>
   );
 }
+
+export default UpdateKategori;

@@ -25,7 +25,7 @@ import { FilePenLine } from "lucide-react";
 import { updateUser } from "@/function/user"; // Assume updateUser is defined
 import { toast } from "sonner";
 
-export function UpdateUser({ user }) {
+function UpdateUser({ user }) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -163,3 +163,5 @@ export function UpdateUser({ user }) {
     </Dialog>
   );
 }
+
+export default UpdateUser;

@@ -28,7 +28,7 @@ import { toast } from "sonner";
 import { updateBarang } from "@/function/barang";
 import { FilePenLine } from "lucide-react";
 
-export function UpdateBarang({ barang }) {
+function UpdateBarang({ barang }) {
   const [isOpen, setIsOpen] = useState(false);
   const [nama_barang, setNamaBarang] = useState("");
   const [jumlah, setJumlah] = useState("");
@@ -240,3 +240,5 @@ export function UpdateBarang({ barang }) {
     </Dialog>
   );
 }
+
+export default UpdateBarang;

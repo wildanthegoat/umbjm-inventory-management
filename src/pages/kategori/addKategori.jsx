@@ -17,7 +17,7 @@ import { Plus } from "lucide-react";
 import { addKategori } from "@/function/kategori";
 import { toast } from "sonner"
 
-export function AddKategori() {
+function AddKategori() {
   const [isOpen, setIsOpen] = useState(false);
   const [nama_kategori, setKategori,] = useState('');
   const queryClient = useQueryClient();
@@ -89,3 +89,4 @@ export function AddKategori() {
     </Dialog>
   );
 }
+export default AddKategori;

@@ -25,7 +25,7 @@ import { Plus } from "lucide-react";
 import { addUser } from '@/function/user';
 import { toast } from "sonner"
 
-export function AddUser() {
+function AddUser() {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -163,3 +163,5 @@ export function AddUser() {
     </Dialog>
   );
 }
+
+export default AddUser;

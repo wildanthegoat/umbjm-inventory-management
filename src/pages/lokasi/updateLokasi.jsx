@@ -25,7 +25,7 @@ import { FilePenLine } from "lucide-react";
 import { updateLokasi } from "@/function/lokasi"; // Update API function
 import { toast } from "sonner";
 
-export const UpdateLokasi = ({ lokasi }) => {
+const UpdateLokasi = ({ lokasi }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [kampus, setKampus] = useState(lokasi.kampus);
   const [gedung, setGedung] = useState(lokasi.gedung);
@@ -162,3 +162,5 @@ export const UpdateLokasi = ({ lokasi }) => {
     </Dialog>
   );
 };
+
+export default UpdateLokasi;

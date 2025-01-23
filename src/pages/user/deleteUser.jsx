@@ -17,7 +17,7 @@ import { Trash } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { deleteUser } from "@/function/user";
-export const DeleteUser = ({ userId, userName }) => {
+const DeleteUser = ({ userId, userName }) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -63,3 +63,5 @@ export const DeleteUser = ({ userId, userName }) => {
     </AlertDialog>
   );
 };
+
+export default DeleteUser;

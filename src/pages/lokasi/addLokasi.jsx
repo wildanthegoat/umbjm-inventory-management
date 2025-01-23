@@ -25,7 +25,7 @@ import { Plus } from "lucide-react";
 import { addLokasi } from "@/function/lokasi";
 import { toast } from "sonner";
 
-export function AddLokasi() {
+function AddLokasi() {
   const [isOpen, setIsOpen] = useState(false);
   const [kampus, setKampus] = useState("");
   const [gedung, setGedung] = useState("");
@@ -172,3 +172,5 @@ export function AddLokasi() {
     </Dialog>
   );
 }
+
+export default AddLokasi;
