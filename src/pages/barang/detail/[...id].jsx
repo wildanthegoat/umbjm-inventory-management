@@ -23,7 +23,7 @@ const BarangDetailPage = () => {
   const { id } = router.query;
   const [data, setData] = useState(null);
   const [umur, setUmur] = useState({ days: 0, months: 0, years: 0 });
-  const qrRef = useRef(null); 
+  const qrRef = useRef(null);
 
   useEffect(() => {
     if (!id) {
@@ -71,7 +71,9 @@ const BarangDetailPage = () => {
     if (!value) return "0";
     return new Intl.NumberFormat("id-ID", {
       minimumFractionDigits: 0,
-    }).format(value).replace(/,/g, ".");
+    })
+      .format(value)
+      .replace(/,/g, ".");
   };
   return (
     <div>
@@ -109,6 +111,12 @@ const BarangDetailPage = () => {
                 <strong>Jumlah:</strong>
               </p>
               <p className="text-3xl">{data.jumlah}</p>
+              <p>
+                <strong>Total Harga:</strong>
+              </p>
+              <p className="text-3xl">
+                Rp. {formatRupiah(data.jumlah * data.harga)}
+              </p>
             </div>
             {/* Right Section */}
             <div className="items-center mt-5">
@@ -116,6 +124,7 @@ const BarangDetailPage = () => {
                 <strong>Harga:</strong>
               </p>
               <p className="text-3xl">Rp. {formatRupiah(data.harga)}</p>
+
               <p>
                 <strong>Tanggal Masuk:</strong>
               </p>
