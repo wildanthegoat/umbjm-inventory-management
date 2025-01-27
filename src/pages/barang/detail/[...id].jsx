@@ -67,6 +67,12 @@ const BarangDetailPage = () => {
     link.click();
   };
 
+  const formatRupiah = (value) => {
+    if (!value) return "0";
+    return new Intl.NumberFormat("id-ID", {
+      minimumFractionDigits: 0,
+    }).format(value).replace(/,/g, ".");
+  };
   return (
     <div>
       <Head>
@@ -109,7 +115,7 @@ const BarangDetailPage = () => {
               <p>
                 <strong>Harga:</strong>
               </p>
-              <p className="text-3xl">Rp.{data.harga}</p>
+              <p className="text-3xl">Rp. {formatRupiah(data.harga)}</p>
               <p>
                 <strong>Tanggal Masuk:</strong>
               </p>
@@ -145,7 +151,7 @@ const BarangDetailPage = () => {
                         {data.nama_barang}
                       </p>
                       <QRCodeCanvas
-                        value={`https://umbjm-inventory-management.vercel.app/api/barang?id=${id}`}
+                        value={`${process.env.NEXT_PUBLIC_API_URL}/barang/detail/${id}`}
                         size={256}
                         level="H"
                         includeMargin
