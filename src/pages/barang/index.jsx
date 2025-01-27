@@ -60,6 +60,7 @@ const BarangPage = () => {
     kondisi: true,
     jumlah: true,
     harga: true,
+    total_harga: true,
     kategori: true,
     lokasi: true,
     gedung: false,
@@ -84,11 +85,13 @@ const BarangPage = () => {
     if (selectedKategori) {
       filtered = filtered.filter((item) => item.kategori.id === selectedKategori);
     }
-
+    
     // Apply the location filter
     if (selectedLokasi.kampus) {
       filtered = filtered.filter((item) => item.lokasi.kampus === selectedLokasi.kampus);
     }
+
+    filtered = filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     // Apply the global search filter
     return filterData(filtered, [
@@ -121,6 +124,9 @@ const BarangPage = () => {
     setSelectedLokasi({ ...selectedLokasi, kampus });
   };
 
+  const formatRupiah = (value) => {
+      return new Intl.NumberFormat("id-ID").format(value);
+    };
   return (
     <div>
       <Head>
@@ -181,6 +187,7 @@ const BarangPage = () => {
                 {visibleColumns.kondisi && <TableHead>Kondisi</TableHead>}
                 {visibleColumns.jumlah && <TableHead>Jumlah</TableHead>}
                 {visibleColumns.harga && <TableHead>Harga</TableHead>}
+                {visibleColumns.total_harga && <TableHead>Total Harga</TableHead>}
                 {visibleColumns.kategori && <TableHead>Kategori</TableHead>}
                 {visibleColumns.lokasi && <TableHead>Lokasi</TableHead>}
                 {visibleColumns.gedung && <TableHead>Gedung</TableHead>}
@@ -208,7 +215,10 @@ const BarangPage = () => {
                         <TableCell>{barang.jumlah}</TableCell>
                       )}
                       {visibleColumns.harga && (
-                        <TableCell>{barang.harga}</TableCell>
+                        <TableCell>{formatRupiah(barang.harga)}</TableCell>
+                      )}
+                      {visibleColumns.total_harga && (
+                        <TableCell>{formatRupiah(barang.jumlah * barang.harga)}</TableCell>
                       )}
                       {visibleColumns.kategori && (
                         <TableCell>{barang.kategori.nama_kategori}</TableCell>
