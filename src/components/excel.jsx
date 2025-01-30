@@ -21,6 +21,7 @@ export const ExportExcel = () => {
         "Kondisi": barang.kondisi,
         "Jumlah": barang.jumlah,
         "Harga": barang.harga,
+        "Total Harga": barang.harga * barang.jumlah,
         "Deskripsi": barang.deskripsi,
         "Tanggal Masuk" :barang.tanggal_masuk,
         "Kategori": barang.kategori.nama_kategori,
@@ -35,7 +36,7 @@ export const ExportExcel = () => {
 
       // Customize header names
       XLSX.utils.sheet_add_aoa(worksheet, [
-        ["Nama Barang", "Kondisi", "Jumlah", "Harga", "Deskripsi", "Tanggal Masuk","Kategori", "Lokasi", "Gedung", "Ruangan"],
+        ["Nama Barang", "Kondisi", "Jumlah", "Harga", "Total Harga", "Deskripsi", "Tanggal Masuk","Kategori", "Lokasi", "Gedung", "Ruangan"],
       ], { origin: "A1" });
 
       // Append worksheet to workbook
